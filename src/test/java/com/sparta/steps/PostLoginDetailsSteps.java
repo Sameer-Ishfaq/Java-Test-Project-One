@@ -1,4 +1,4 @@
-package com.sparta.sgAcademyApi.steps;
+package com.sparta.steps;
 
 import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
