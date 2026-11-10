@@ -1,0 +1,4 @@
+name: Trigger on pull and merge when tests pass
+on: [ pull_request, ]
+
+jobs:
