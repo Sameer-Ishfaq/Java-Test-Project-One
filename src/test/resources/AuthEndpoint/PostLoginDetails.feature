@@ -1,8 +1,8 @@
 Feature: Post with username and password
-  As a user,
-  I want to enter a valid username and password,
-  So That i am logged in,
-  And receive bearers token
+  as a user,
+  i want to enter a valid username and password,
+  so that i am logged in,
+  and receive a bearers token
 
 
   Background:
