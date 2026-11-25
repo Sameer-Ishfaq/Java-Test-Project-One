@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
@@ -21,7 +21,7 @@ jobs:
 
   docker:
     needs: test
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
@@ -35,7 +35,7 @@ jobs:
 
   deploy:
     needs: docker
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Deploy
