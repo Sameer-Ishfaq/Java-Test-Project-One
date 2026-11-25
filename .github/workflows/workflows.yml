@@ -1,4 +1,43 @@
 name: Trigger on pull and merge when tests pass
-on: pull_request
+on: push
 
-jobs: Get Code
+jobs:
+  lint:
+    runs-on: windows-latest
+    steps:
+      - name: Get Code
+        uses: actions/checkout@v3
+      - name: Get Dependencies
+        run: npm ci
+      - name: Run Lint Test
+        run: npm run lint
+  test:
+    runs-on: windows-latest
+    needs: lint
+    steps:
+      - name: Get Code
+        uses: actions/checkout@v3
+      - name: Run tests
+        uses: actions/checkout@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm test
+  deploy:
+    needs: [test,lint]
+    runs-on: windows-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Run tests
+        uses: actions/checkout@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm ci
+      - name: Build Project
+        run: npm run build
+      - name: Deploy
+        run: echo "Deploying to project..."
