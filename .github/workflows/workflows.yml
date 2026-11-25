@@ -32,3 +32,11 @@ jobs:
 
       - name: Run Docker Container
         run: docker run --rm swagger-api-tests
+
+  deploy:
+    needs: docker
+    runs-on: windows-latest
+
+    steps:
+      - name: Deploy
+        run: echo "Deploying project..."
