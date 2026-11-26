@@ -20,6 +20,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class GetSpartansByIdSteps {
+    private SharedAuthStep auth;
+    public GetSpartansByIdSteps(SharedAuthStep auth){
+        this.auth = auth;
+    }
     private final String BASE_URI = "https://spartaacademyapi20240530152521.azurewebsites.net/api/Spartans";
     private final String BASE_URI_FOR_LOGIN = "https://spartaacademyapi20240530152521.azurewebsites.net";
     private RequestSpecification request = RestAssured
@@ -28,7 +32,7 @@ public class GetSpartansByIdSteps {
             .baseUri(BASE_URI);
 
     private Response response;
-    private String token;
+   // private String token;
 
 
 @Given("i am authenticated")
@@ -46,14 +50,15 @@ public void iAmAuthenticated() {
             .body(body)
             .post("Auth/login");
 
-    token = response.jsonPath().getString("token");
+    auth.setToken(response.jsonPath().getString("token"));
+
 }
 
     @When("i send a GET request retrieving a valid id {int}")
     public void iSendAGETRequestRetrievingAValidId(int validId) {
 
         response = request
-                .header("Authorization"," Bearer " + token)
+                .header("Authorization","Bearer " + auth.getToken())
                 .accept("application/json")
                 .when()
                 .get("/" + validId)
@@ -63,7 +68,7 @@ public void iAmAuthenticated() {
     @When("i send a GET request to the endpoint with id {int}")
     public void iSendAGETRequestToTheEndpointWithId(int id) {
         response = request
-                .header("Authorization","Bearer " + token)
+                .header("Authorization","Bearer " + auth.getToken())
                 .accept("application/json")
                 .when()
                 .get("/" + id)
@@ -73,7 +78,7 @@ public void iAmAuthenticated() {
     @When("i send a GET request to get an invalid {string}")
     public void iSendAGETRequestToGetAnInvalidId(Object invalidId) {
         response = request
-                .header("Authorization","Bearer " + token)
+                .header("Authorization","Bearer " + auth.getToken())
                 .accept("application/json")
                 .when()
                 .get("/" + invalidId)
@@ -96,8 +101,7 @@ public void iAmAuthenticated() {
 
     @And("i should be presented with a fresh {string}")
     public void iShouldBePresentedWithAUniqueBearerToken(String bearerToken) {
-        bearerToken = response.jsonPath().getString("token");
-        System.out.println(bearerToken);
+        bearerToken = auth.getToken();
 
         assertThat(bearerToken, Matchers.notNullValue());
     }

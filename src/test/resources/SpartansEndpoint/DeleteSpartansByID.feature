@@ -1,7 +1,7 @@
 Feature: As a tester, i want send a DELETE the spartans by ID, so that i can test its functionality
 
   Background:
-    Given i am logged in and have a bearer token
+    Given i am authenticated
 
 
     @Happy

@@ -13,94 +13,78 @@ import org.hamcrest.Matchers;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DeleteSpartansByIdSteps {
+    SharedAuthStep auth;
+    public DeleteSpartansByIdSteps(SharedAuthStep auth){
+        this.auth = auth;
+    }
     private final String BASE_URI = "https://spartaacademyapi20240530152521.azurewebsites.net/api/Spartans";
-    private final String BASE_URI_FOR_LOGIN = "https://spartaacademyapi20240530152521.azurewebsites.net";
-
-    private RequestSpecification request = RestAssured
+    private final RequestSpecification request = RestAssured
             .given()
             .header("Accept", "application/json")
             .baseUri(BASE_URI);
 
     private Response response;
-    private String token;
     private int createdId;
-
-    @Given("i am logged in and have a bearer token")
-    public void iAmLoggedInAndHaveABearerToken() {
-        String body = """
-            {
-            "username": "sparta",
-            "password": "global"
-            }
-            """;
-        response = RestAssured
-                .given()
-                .baseUri(BASE_URI_FOR_LOGIN)
-                .contentType("application/json")
-                .body(body)
-                .post("Auth/login");
-
-        token = response.jsonPath().getString("token");
-    }
 
     @Given("a spartan exists with a valid id")
     public void aSpartanExistsWithAValidId() {
-       //  createdId = 2;
+         createdId = 2;
+         auth.setSpartanId(createdId);
         //    ************************************************************************
-//          ** Attempting a delete request using this JSON body returns 500 error. Did everything i could to resolve this but no progress
-//          ** Using an int variable and assigning it an existing id within the api passes the test
-//          ** Code below to reproduce the error
-        String body = """
-                {
-                  "id": 2,
-                  "firstName": "Sameer",
-                  "lastName": "Ishfaq",
-                  "university": "Staffordshire University",
-                  "degree": "Computer Science",
-                  "course": {
-                  "id" : 1,
-                  "name": "Engineering",
-                  "stream": {
-                   "id": 1,
-                   "name": "Technology"
-                   },
-                  "streamId": 1,
-                  "trainer": "Trainer"
-                  },
-                  "courseId": 1,
-                  "graduated": true
-                 }
-                """;
-		response = request
-                .header("Authorization","Bearer " + token)
-                .contentType("application/json")
-                .body(body)
-                .when()
-                .log().all()
-                .post()
-                .thenReturn();
-        assertThat(response.statusCode(), Matchers.is(201));
-
-        createdId = response.jsonPath().getInt("id");
- //  ************************************************************************
+////          ** Attempting a delete request using this JSON body returns 500 error. Did everything i could to resolve this but no progress
+////          ** Using an int variable and assigning it an existing id within the api passes the test
+////          ** Code below to reproduce the error
+//        String body = """
+//                {
+//                  "id": 2,
+//                  "firstName": "Sameer",
+//                  "lastName": "Ishfaq",
+//                  "university": "Staffordshire University",
+//                  "degree": "Computer Science",
+//                  "course": {
+//                  "id" : 1,
+//                  "name": "Engineering",
+//                  "stream": {
+//                   "id": 1,
+//                   "name": "Technology"
+//                   },
+//                  "streamId": 1,
+//                  "trainer": "Trainer"
+//                  },
+//                  "courseId": 1,
+//                  "graduated": true
+//                 }
+//                """;
+//		response = request
+//                .header("Authorization","Bearer " + token)
+//                .contentType("application/json")
+//                .body(body)
+//                .when()
+//                .log().all()
+//                .post()
+//                .thenReturn();
+//        assertThat(response.statusCode(), Matchers.is(201));
+//
+//        createdId = response.jsonPath().getInt("id");
+// //  ************************************************************************
     }
 
     @When("i send a DELETE request with a valid id")
     public void iSendADELETERequestWithAValidId() {
         response = request
-                .header("Authorization","Bearer " + token)
+                .header("Authorization","Bearer " + auth.getToken())
                // .log().all()
                 .when()
-                .delete("/" + createdId)
+                .delete("/" + auth.getSpartanId())
                 .thenReturn();
 
     }
     @When("i send a DELETE request to an invalid id")
     public void iSendADELETERequestToAnInvalidId(){
         response = request
-                .header("Authorization","Bearer " + token)
+                .header("Authorization","Bearer " + auth.getToken())
                 .when()
-                .delete("/" + createdId)
+                .delete("/" + auth.getSpartanId())
                 .thenReturn();
     }
 

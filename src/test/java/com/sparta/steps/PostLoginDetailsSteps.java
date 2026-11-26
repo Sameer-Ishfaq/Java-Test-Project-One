@@ -14,6 +14,11 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class PostLoginDetailsSteps {
+    private final SharedAuthStep auth;
+
+    public PostLoginDetailsSteps(SharedAuthStep auth){
+        this.auth = auth;
+    }
     private RequestSpecification request;
     private Response response;
     private String BASE_URI = "https://spartaacademyapi20240530152521.azurewebsites.net";
@@ -44,6 +49,8 @@ public class PostLoginDetailsSteps {
                 .when()
                 .post()
                 .thenReturn();
+        auth.setResponse(response);
+        auth.setToken(response.jsonPath().getString("token"));
 
     }
 
@@ -73,15 +80,17 @@ public class PostLoginDetailsSteps {
     @And("i should be presented with a unique {string}")
     public void iShouldBePresentedWithAUniqueBearerToken(String bearerToken) {
         bearerToken = response.jsonPath().getString("token");
-        System.out.println(bearerToken);
+
         //check that there is a bearer token and it matches what is expected
         assertThat(bearerToken, Matchers.notNullValue());
+
+        auth.setToken(bearerToken); //Test is executed then stores to avoid any errors
+
     }
 
     @And("i should not be presented with any {string}")
     public void iShouldNotBePresentedWithAnyBearerToken(String bearerToken) {
         bearerToken = response.jsonPath().getString("token");
-        System.out.println(bearerToken);
         //Check that there is no bearer token
         assertThat(bearerToken, Matchers.nullValue());
     }
